@@ -2,8 +2,8 @@ package TurtleGraphic;
 import java.awt.Color;
 import java.util.*;
 import java.util.List;
-
-public class Turtle {
+import tools.*;
+public class Turtle extends Bean {
     private Point currentPosition;
     private List<Point> path ;
     private Color color;
@@ -26,19 +26,13 @@ public class Turtle {
         this.color=color;
     }
 
-    public Color getColor() {
-        return color;
-    }
+    public Color getColor() { return color; }
 
-    public void turn(Heading direction){
-        //Set the moving direction of the turtle
-        headTo = direction;
-    }
+    public void turn(Heading direction){ headTo = direction; }  //Set the moving direction of the turtle
 
     public void move(int steps){
         //Update the path list
         //This list will only store Point when penIsDown == true
-
         int newXCoord = currentPosition.getxCoord();
         int newYCoord = currentPosition.getyCoord();
 
@@ -48,27 +42,27 @@ public class Turtle {
                 path.addAll(headingSouth);
             }
             currentPosition.setxCoord(newXCoord);
-            currentPosition.setyCoord(steps);
+            currentPosition.setyCoord(newYCoord + steps);
         }else if(headTo == Heading.NORTH){
             if(penIsDown) {
                 List<Point> headingNorth = moveNorth(steps);
                 path.addAll(headingNorth);
             }
             currentPosition.setxCoord(newXCoord);
-            currentPosition.setyCoord(steps);
+            currentPosition.setyCoord(newYCoord + steps);
         } else if (headTo == Heading.EAST) {
             if(penIsDown) {
                 List<Point> headingEast = moveEast(steps);
                 path.addAll(headingEast);
             }
-            currentPosition.setxCoord(steps);
+            currentPosition.setxCoord(newXCoord + steps);
             currentPosition.setyCoord(newYCoord);
         }else if(headTo == Heading.WEST){
             if(penIsDown) {
                 List<Point> headingWest = moveWest(steps);
                 path.addAll(headingWest);
             }
-            currentPosition.setxCoord(steps);
+            currentPosition.setxCoord(newXCoord + steps);
             currentPosition.setyCoord(newYCoord);
         }
     }
@@ -79,7 +73,7 @@ public class Turtle {
         List<Point> tempList = new LinkedList<Point>();
         int start = currentPosition.getyCoord()-1;
         int newXCoord = currentPosition.getxCoord();
-        while(start >= yCoord){
+        while(start >= start - yCoord){
             Point newPoint = new Point(newXCoord, start, this.color);
             tempList.add(newPoint);
             start--;
@@ -93,7 +87,7 @@ public class Turtle {
         List<Point> tempList = new LinkedList<Point>();
         int start = currentPosition.getyCoord()+1;
         int newXCoord = currentPosition.getxCoord();
-        while(start <= yCoord){
+        while(start <= yCoord + start){
             Point newPoint = new Point(newXCoord, start, this.color);
             tempList.add(newPoint);
             start++;
@@ -107,7 +101,7 @@ public class Turtle {
         List<Point> tempList = new LinkedList<Point>();
         int start = currentPosition.getxCoord()+1;
         int newYCoord = currentPosition.getyCoord();
-        while(start <= xCoord){
+        while(start <= xCoord + start){
             Point newPoint = new Point(start, newYCoord, this.color);
             tempList.add(newPoint);
             start++;
@@ -121,7 +115,7 @@ public class Turtle {
         List<Point> tempList = new LinkedList<Point>();
         int start = currentPosition.getxCoord()-1;
         int newYCoord = currentPosition.getyCoord();
-        while(start >= xCoord){
+        while(start >= start - xCoord){
             Point newPoint = new Point(start, newYCoord, this.color);
             tempList.add(newPoint);
             start--;

@@ -1,7 +1,6 @@
 package TurtleGraphic;
 import java.awt.Color;
 
-
 public class Point {
     private int xCoord;
     private int yCoord;
@@ -10,12 +9,12 @@ public class Point {
     public Point(int x, int y){
         xCoord = x;
         yCoord = y;
-        color = Color.WHITE;
+        color = Color.BLACK;
     }
-    public Point(int x, int y, Color color){
+    public Point(int x, int y, Color colour){
         xCoord = x;
         yCoord = y;
-        color = color;
+        color = colour;
     }
     public int getxCoord() {
         return xCoord;
