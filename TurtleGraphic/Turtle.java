@@ -5,13 +5,13 @@ import java.util.List;
 import tools.*;
 public class Turtle extends Bean {
     private Point currentPosition;
-    private List<Point> path ;
+    private List<Point> path;
     private Color color;
     private Heading headTo;
     private boolean penIsDown;
 
     public Turtle(){
-        currentPosition = new Point(0,0);
+        currentPosition = new Point(5,5);
         path = new LinkedList<Point>();
         penIsDown = true;
         color = Color.BLACK;
@@ -30,97 +30,117 @@ public class Turtle extends Bean {
 
     public void turn(Heading direction){ headTo = direction; }  //Set the moving direction of the turtle
 
-    public void move(int steps){
+    public void move(int steps, int lowerBound, int rightBound){
         //Update the path list
         //This list will only store Point when penIsDown == true
-        int newXCoord = currentPosition.getxCoord();
-        int newYCoord = currentPosition.getyCoord();
-
         if(headTo == Heading.SOUTH){
             if(penIsDown) {
-                List<Point> headingSouth = moveNorth(steps);
-                path.addAll(headingSouth);
+                moveSouth(steps, lowerBound);
             }
-            currentPosition.setxCoord(newXCoord);
-            currentPosition.setyCoord(newYCoord + steps);
         }else if(headTo == Heading.NORTH){
             if(penIsDown) {
-                List<Point> headingNorth = moveNorth(steps);
-                path.addAll(headingNorth);
+                moveNorth(steps, lowerBound);
             }
-            currentPosition.setxCoord(newXCoord);
-            currentPosition.setyCoord(newYCoord + steps);
         } else if (headTo == Heading.EAST) {
             if(penIsDown) {
-                List<Point> headingEast = moveEast(steps);
-                path.addAll(headingEast);
+              moveEast(steps, rightBound);
             }
-            currentPosition.setxCoord(newXCoord + steps);
-            currentPosition.setyCoord(newYCoord);
         }else if(headTo == Heading.WEST){
             if(penIsDown) {
-                List<Point> headingWest = moveWest(steps);
-                path.addAll(headingWest);
+                moveWest(steps, rightBound);
             }
-            currentPosition.setxCoord(newXCoord + steps);
-            currentPosition.setyCoord(newYCoord);
         }
+
+        Point lastPoint = path.get(path.size()-1);
+        currentPosition.setxCoord(lastPoint.getxCoord());
+        currentPosition.setyCoord(lastPoint.getyCoord());
     }
 
-    private List<Point> moveNorth(int yCoord){
-        //Create list that store Point to the north direction(going up in the coordinate system)
-        //This list will join with the main path list.
-        List<Point> tempList = new LinkedList<Point>();
-        int start = currentPosition.getyCoord()-1;
+    private void moveNorth(int yCoord, int outOfBound){
+        //Moving upward
+        int start = 0;
+        int newYCoord = currentPosition.getyCoord() - 1;
         int newXCoord = currentPosition.getxCoord();
-        while(start >= start - yCoord){
-            Point newPoint = new Point(newXCoord, start, this.color);
-            tempList.add(newPoint);
-            start--;
-        }
-        return tempList;
-    }
-
-    private List<Point> moveSouth(int yCoord){
-        //Create list that store Point to the south direction(going down in the coordinate system)
-        //This list will join with the main path list.
-        List<Point> tempList = new LinkedList<Point>();
-        int start = currentPosition.getyCoord()+1;
-        int newXCoord = currentPosition.getxCoord();
-        while(start <= yCoord + start){
-            Point newPoint = new Point(newXCoord, start, this.color);
-            tempList.add(newPoint);
+        while(start < yCoord){
+            if(newYCoord < 0){
+                newYCoord += outOfBound;
+            }
+            Point newPoint = new Point(newXCoord, newYCoord, this.color);
+            newYCoord -= 1;
+            path.add(newPoint);
             start++;
         }
-        return tempList;
     }
 
-    private List<Point> moveEast(int xCoord){
-        //Create list that store Point to the east direction(to the right)
-        //This list will join with the main path list.
-        List<Point> tempList = new LinkedList<Point>();
-        int start = currentPosition.getxCoord()+1;
-        int newYCoord = currentPosition.getyCoord();
-        while(start <= xCoord + start){
-            Point newPoint = new Point(start, newYCoord, this.color);
-            tempList.add(newPoint);
+    private void moveSouth(int yCoord, int outOfBound){
+        //Moving downward
+        int start = 0;
+        int newYCoord = currentPosition.getyCoord() + 1;
+        int newXCoord = currentPosition.getxCoord();
+        while(start < yCoord){
+            if(newYCoord > outOfBound){
+                newYCoord -= outOfBound;
+            }
+            Point newPoint = new Point(newXCoord, newYCoord, this.color);
+            newYCoord ++;
+            path.add(newPoint);
             start++;
         }
-        return tempList;
     }
 
-    private List<Point> moveWest(int xCoord){
-        //Create list that store Point to the west direction(to the left)
-        //This list will join with the main path list.
-        List<Point> tempList = new LinkedList<Point>();
-        int start = currentPosition.getxCoord()-1;
+    private void moveEast(int xCoord, int outOfBound){
+        //Moving to the right
+        int start = 0;
         int newYCoord = currentPosition.getyCoord();
-        while(start >= start - xCoord){
-            Point newPoint = new Point(start, newYCoord, this.color);
-            tempList.add(newPoint);
-            start--;
+        int newXCoord = currentPosition.getxCoord() + 1;
+        while(start < xCoord){
+            if(newXCoord > outOfBound){
+                newXCoord -= outOfBound;
+            }
+            Point newPoint = new Point(newXCoord, newYCoord, this.color);
+            newXCoord ++;
+            path.add(newPoint);
+            start++;
         }
-        return tempList;
     }
 
+    private void moveWest(int xCoord, int outOfBound){
+        //Moving to the left
+        int start = 0;
+        int newYCoord = currentPosition.getyCoord();
+        int newXCoord = currentPosition.getxCoord() - 1;
+        while(start < xCoord){
+            if(newXCoord < 0){
+                newXCoord += outOfBound;
+            }
+            Point newPoint = new Point(newXCoord, newYCoord, this.color);
+            newXCoord --;
+            path.add(newPoint);
+            start++;
+        }
+    }
+
+    public static void main(String[] args){
+        Turtle turtle = new Turtle();
+        turtle.turn(Heading.NORTH);
+        System.out.println(turtle.headTo);
+        turtle.move(10, 12, 12);
+        System.out.println(turtle.currentPosition.getxCoord());
+        System.out.println(turtle.currentPosition.getyCoord());
+        System.out.println();
+        turtle.turn(Heading.SOUTH);
+        turtle.move(1, 12, 12);
+        System.out.println(turtle.currentPosition.getxCoord());
+        System.out.println(turtle.currentPosition.getyCoord());
+        System.out.println();
+        turtle.turn(Heading.EAST);
+        turtle.move(10, 12, 12);
+        System.out.println(turtle.currentPosition.getxCoord());
+        System.out.println(turtle.currentPosition.getyCoord());
+        System.out.println();
+        turtle.turn(Heading.WEST);
+        turtle.move(18, 12, 12);
+        System.out.println(turtle.currentPosition.getxCoord());
+        System.out.println(turtle.currentPosition.getyCoord());
+    }
 }
