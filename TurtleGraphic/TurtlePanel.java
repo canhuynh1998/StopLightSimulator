@@ -10,25 +10,29 @@ import javax.swing.*;
 import tools.*;
 
 public class TurtlePanel extends JPanel implements ActionListener {
+    private Turtle model;
+    private TurtleView view;
+
     private JFrame frame;
     public static int FRAME_WIDTH = 500;
     public static int FRAME_HEIGHT = 300;
     public TurtlePanel(){
-        JPanel controlJPanel = new JPanel();
+        model = new Turtle();
+        view = new TurtleView(model);
         JPanel controlJPanel1 = new JPanel();
         setLayout((new GridLayout(1, 2)));
         add(controlJPanel1);
-        add(controlJPanel);
+        add(view);
 
         controlJPanel1.setBackground(Color.CYAN);
-        controlJPanel.setBackground(Color.WHITE);
+        view.setBackground(Color.WHITE);
 
         controlJPanel1.setLayout(new FlowLayout(FlowLayout.CENTER, 40, 20));
         JButton NorthButton = new JButton("North");
         NorthButton.addActionListener(this);
         controlJPanel1.add(NorthButton);
 
-        JButton SouthButton = new JButton("North");
+        JButton SouthButton = new JButton("South");
         SouthButton.addActionListener(this);
         controlJPanel1.add(SouthButton);
 
@@ -36,22 +40,20 @@ public class TurtlePanel extends JPanel implements ActionListener {
         EastButton.addActionListener(this);
         controlJPanel1.add(EastButton);
 
-        JButton WestButton = new JButton("East");
+        JButton WestButton = new JButton("West");
         WestButton.addActionListener(this);
         controlJPanel1.add(WestButton);
 
-        JButton DrawButton = new JButton("Draw");
+        JButton DrawButton = new JButton("Pen");
         DrawButton.addActionListener(this);
         controlJPanel1.add(DrawButton);
-
-
 
         frame = new JFrame();
         Container cp = frame.getContentPane();
         cp.add(this);
         frame.setJMenuBar(createMenuBar());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setTitle("Stoplight Simulator");
+        frame.setTitle("Turtle Graphic");
         frame.setSize(FRAME_WIDTH, FRAME_HEIGHT);
         frame.setVisible(true);
     }
@@ -82,6 +84,14 @@ public class TurtlePanel extends JPanel implements ActionListener {
             Utilities.inform("Cyberdellic Designs Stoplight Simulator 1.1, 2020. All rights reserved.");
         }else if(cmnd == "Help" ){
             Utilities.inform("Click or select direction buttons to draw at the desired direction");
+        }else if(cmnd == "Pen"){
+          model.setPenIsDown();
+          System.out.println(model.getColor());
+        } else if(cmnd == "North"){
+            int steps = Integer.parseInt(Utilities.ask("How many steps"));
+            model.turn(Heading.NORTH);
+            model.move(steps);
+            System.out.println("Test");
         }
     }
 

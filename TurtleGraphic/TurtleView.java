@@ -6,14 +6,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 public class TurtleView extends JPanel implements PropertyChangeListener {
     private Turtle model;
-    private int upperBound;
-    private int rightBound;
-
-    public TurtleView(Turtle model, int upperBound, int rightBound){
+    private final int diameter;
+    public TurtleView(Turtle model){
         this.model = model;
         model.addPropertyChangeListener(this);
-        this.upperBound = upperBound;
-        this.rightBound = rightBound;
+        this.diameter = 10;
 
     }
     public void setModel(Turtle model){
@@ -24,6 +21,17 @@ public class TurtleView extends JPanel implements PropertyChangeListener {
         repaint();
     }
 
+    public void paintComponent(Graphics gc) {
+        super.paintComponent(gc);
+        Color oldColor = gc.getColor();
+        gc.setColor(model.getColor());
+        System.out.println(model.getPoint().getxCoord()+" "+ model.getPoint().getyCoord());
+        gc.fillOval(model.getPoint().getxCoord(), model.getPoint().getyCoord(), diameter, diameter);
+        gc.setColor(oldColor);
+    }
+
     @Override
-    public void propertyChange(PropertyChangeEvent arg0){}
+    public void propertyChange(PropertyChangeEvent arg0){
+        repaint();
+    }
 }
