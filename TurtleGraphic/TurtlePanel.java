@@ -63,7 +63,7 @@ public class TurtlePanel extends JPanel implements ActionListener {
         // add file, edit, and help menus
         // this keyword means TurtlePanel
         JMenu fileMenu =
-                Utilities.makeMenu("File", new String[] {"New",  "Save", "SaveAs", "Open", "Quit"}, this);
+                Utilities.makeMenu("File", new String[] {"New", "SaveAs", "Open", "Quit"}, this);
         result.add(fileMenu);
 
         JMenu editMenu =
@@ -91,7 +91,12 @@ public class TurtlePanel extends JPanel implements ActionListener {
             int steps = Integer.parseInt(Utilities.ask("How many steps"));
             model.turn(Heading.NORTH);
             model.move(steps);
-            System.out.println("Test");
+            System.out.println("North");
+        } else if(cmnd == "East"){
+            int steps = Integer.parseInt(Utilities.ask("How many steps"));
+            model.turn(Heading.EAST);
+            model.move(steps);
+            System.out.println("East");
         }
     }
 
