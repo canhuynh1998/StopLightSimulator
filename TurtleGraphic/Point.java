@@ -7,12 +7,14 @@ public class Point implements Serializable {
     private int yCoord;
     private Boolean endPoint;
     private Color color;
+    private int pos;
 
-    public Point(int x, int y){
+    public Point(int x, int y, int posi){
         xCoord = x;
         yCoord = y;
         color = Color.BLACK;
         endPoint = false;
+        pos = posi;
     }
     public Point(int x, int y, Color colour){
         xCoord = x;
@@ -20,6 +22,9 @@ public class Point implements Serializable {
         color = colour;
         endPoint = false;
     }
+
+    public int getPos(){return pos;}
+
     public int getxCoord() {
         return xCoord;
     }

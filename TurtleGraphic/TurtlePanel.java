@@ -91,10 +91,15 @@ public class TurtlePanel extends JPanel implements ActionListener {
             int steps = Integer.parseInt(Utilities.ask("How many steps"));
             model.turn(Heading.NORTH);
             model.move(steps);
-            System.out.println("North");
+            //System.out.println("North");
         } else if(cmnd == "East"){
             int steps = Integer.parseInt(Utilities.ask("How many steps"));
             model.turn(Heading.EAST);
+            model.move(steps);
+            //System.out.println("East");
+        }else if(cmnd == "West"){
+            int steps = Integer.parseInt(Utilities.ask("How many steps"));
+            model.turn(Heading.WEST);
             model.move(steps);
             System.out.println("East");
         }

@@ -10,7 +10,7 @@ public class TurtleView extends JPanel implements PropertyChangeListener {
     public TurtleView(Turtle model){
         this.model = model;
         model.addPropertyChangeListener(this);
-        this.diameter = 10;
+        this.diameter = 5;
 
     }
     public void setModel(Turtle model){
@@ -23,22 +23,19 @@ public class TurtleView extends JPanel implements PropertyChangeListener {
 
     public void paintComponent(Graphics gc) {
         Point previous = model.getList().get(0);
-        System.out.println(previous.getyCoord());
-        System.out.println(model.getList().size());
+        System.out.println(previous.getxCoord()+"  "+previous.getyCoord());
         super.paintComponent(gc);
         Color oldColor = gc.getColor();
         gc.setColor(model.getColor());
         gc.fillOval(model.getCurrentPosition().getxCoord(), model.getCurrentPosition().getyCoord(), diameter, diameter);
         for(Point current : model.getList()){
+            if(current.getEndPoint() == false && previous.getEndPoint() == false){
+                gc.drawLine(previous.getxCoord(), previous.getyCoord(), current.getxCoord(), current.getyCoord());
+            }
 
-            System.out.println("View");
-
-            gc.drawLine(previous.getxCoord(), previous.getyCoord(), current.getxCoord(), current.getyCoord());
             gc.setColor(oldColor);
-            previous.setxCoord(current.getxCoord());
-            previous.setyCoord(current.getyCoord());
+            previous = new Point(current.getxCoord(), current.getyCoord(), current.getPos());
         }
-
     }
 
     @Override

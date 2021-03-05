@@ -12,9 +12,9 @@ public class Turtle extends Bean {
     private boolean penIsDown;
 
     public Turtle(){
-        currentPosition = new Point(35,35);
+        currentPosition = new Point(80,80, 1);
         path = new ArrayList<Point>();
-        //path.add(currentPosition);
+        path.add(new Point(80, 80, 1));
         penIsDown = true;
         color = Color.BLACK;
     }
@@ -31,10 +31,6 @@ public class Turtle extends Bean {
     }
     public Point getCurrentPosition(){return this.currentPosition;}
 
-//    public Point getPrevious() {
-//        return this.previous;
-//    }
-
     public void setColor(Color color){
         this.color=color;
     }
@@ -45,13 +41,8 @@ public class Turtle extends Bean {
     public List<Point> getList(){ return path; }
 
     public void move(int steps){
-        if(penIsDown){
-            path.add(currentPosition);
-        }
         int newXpos = currentPosition.getxCoord();
         int newYpos = currentPosition.getyCoord();
-        System.out.println(steps);
-        Point previous = new Point(newXpos,newYpos);
         if(headTo == Heading.SOUTH){
             newYpos = newYpos + steps > WORLD_SIZE ?
                     newYpos + steps - WORLD_SIZE: newYpos +steps;
@@ -61,67 +52,29 @@ public class Turtle extends Bean {
         }else if(headTo == Heading.EAST){
             newXpos =  newXpos + steps > WORLD_SIZE ?
                     newXpos + steps - WORLD_SIZE : newXpos + steps;
-        }else if(headTo == Heading.WEST){
-            newXpos =  newXpos - steps < 0  ? newXpos - steps + WORLD_SIZE : newXpos - steps;
+        }else if(headTo == Heading.WEST) {
+            newXpos = newXpos - steps < 0 ? newXpos - steps + WORLD_SIZE : newXpos - steps;
         }
-        Point newPoint = new Point(newXpos, newYpos);
+        Point newPoint = new Point(newXpos, newYpos, currentPosition.getPos()+1);
+        System.out.println("\n/********************Before*****************/");
+        for(Point test: path){
+            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
+        }
+        System.out.println();
+
+        System.out.println();
         if(penIsDown){
             path.add(newPoint);
-            System.out.println(newPoint.getxCoord()+" "+newPoint.getyCoord());
-            System.out.println("/*************Test***********/");
+        }else{
+            newPoint.setEndPoint(true);
         }
-        currentPosition.setyCoord(newPoint.getyCoord());
-        currentPosition.setxCoord(newPoint.getxCoord());
-        System.out.println(currentPosition.getxCoord()+" "+currentPosition.getyCoord());
-        firePropertyChange(null, null, null);
-    }
-
-    public void move1(int steps){
-        //Update the path list
-        //This list will only store Point when penIsDown == true
-        List<Point> oldList = path;
-        Point lastPoint = currentPosition;
-        int newXPosition = currentPosition.getxCoord();
-        int newYPosition = currentPosition.getyCoord();
-        if(headTo == Heading.SOUTH){
-            if(penIsDown) {
-                moveSouth(steps);
-            }else{
-                newYPosition = newYPosition + steps > WORLD_SIZE ?
-                        newYPosition + steps - WORLD_SIZE: newYPosition +steps;
-                System.out.println(newYPosition);
-            }
-        }else if(headTo == Heading.NORTH){
-            if(penIsDown) {
-                moveNorth(steps);
-            }else{
-                newYPosition = newYPosition - steps < 0 ?
-                        newYPosition - steps + WORLD_SIZE: newYPosition - steps;
-            }
-        } else if (headTo == Heading.EAST) {
-            if(penIsDown) {
-              moveEast(steps);
-            }else{
-                newXPosition =  newXPosition + steps > WORLD_SIZE ?
-                        newXPosition + steps - WORLD_SIZE : newXPosition + steps;
-            }
-        }else if(headTo == Heading.WEST){
-            if(penIsDown) {
-                moveWest(steps);
-            }else{
-                newXPosition =  newXPosition - steps < 0  ? newXPosition - steps + WORLD_SIZE : newXPosition - steps;
-            }
+        currentPosition = new Point(newXpos, newYpos, newPoint.getPos());
+        currentPosition.setEndPoint(newPoint.getEndPoint());
+        System.out.print("("+""+currentPosition.getxCoord()+" "+currentPosition.getyCoord()+") position at: "+currentPosition.getEndPoint()+"; ");
+        System.out.println("\n/********************After*****************/");
+        for(Point test: path){
+            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
         }
-        if(penIsDown){
-            lastPoint = path.get(path.size()-1);
-
-        }else {
-            lastPoint.setyCoord(newYPosition);
-            lastPoint.setxCoord(newXPosition);
-            lastPoint.setEndPoint(true);
-        }
-        currentPosition.setxCoord(lastPoint.getxCoord());
-        currentPosition.setyCoord(lastPoint.getyCoord());
         firePropertyChange(null, null, null);
     }
 
@@ -193,21 +146,27 @@ public class Turtle extends Bean {
         Turtle turtle = new Turtle();
         System.out.println(turtle.getList().size());
         turtle.turn(Heading.NORTH);
-        System.out.println(turtle.headTo);
+        //System.out.println(turtle.headTo);
         turtle.move(10);
-        for(Point point: turtle.path){
-            System.out.println(point.getxCoord()+" "+point.getyCoord());
-        }
+//        for(Point point: turtle.path){
+//            System.out.println(point.getxCoord()+" "+point.getyCoord());
+//        }
 
 //        System.out.println(turtle.currentPosition.getyCoord());
 //        System.out.println();
 //        turtle.turn(Heading.SOUTH);
+//        for(Point point: turtle.path){
+//            System.out.println(point.getxCoord()+" "+point.getyCoord());
+//        }
 //        turtle.move1(1);
 //        System.out.println(turtle.currentPosition.getxCoord());
 //        System.out.println(turtle.currentPosition.getyCoord());
 //        System.out.println();
-//        turtle.turn(Heading.EAST);
-//        turtle.move1(10);
+        turtle.turn(Heading.EAST);
+        turtle.move(10);
+//        for(Point point: turtle.path){
+//            System.out.println(point.getxCoord()+" "+point.getyCoord());
+//        }
 //        System.out.println(turtle.currentPosition.getxCoord());
 //        System.out.println(turtle.currentPosition.getyCoord());
 //        System.out.println();
