@@ -14,8 +14,8 @@ public class TurtlePanel extends JPanel implements ActionListener {
     private TurtleView view;
 
     private JFrame frame;
-    public static int FRAME_WIDTH = 500;
-    public static int FRAME_HEIGHT = 300;
+    public static int FRAME_WIDTH = 250;
+    public static int FRAME_HEIGHT = 250;
     public TurtlePanel(){
         model = new Turtle();
         view = new TurtleView(model);

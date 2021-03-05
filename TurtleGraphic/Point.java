@@ -9,12 +9,12 @@ public class Point implements Serializable {
     private Color color;
     private int pos;
 
-    public Point(int x, int y, int posi){
+    public Point(int x, int y){
         xCoord = x;
         yCoord = y;
         color = Color.BLACK;
         endPoint = false;
-        pos = posi;
+
     }
     public Point(int x, int y, Color colour){
         xCoord = x;

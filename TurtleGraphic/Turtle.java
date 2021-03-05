@@ -12,9 +12,9 @@ public class Turtle extends Bean {
     private boolean penIsDown;
 
     public Turtle(){
-        currentPosition = new Point(80,80, 1);
+        currentPosition = new Point(50,50);
         path = new ArrayList<Point>();
-        path.add(new Point(80, 80, 1));
+        path.add(new Point(50, 50));
         penIsDown = true;
         color = Color.BLACK;
     }
@@ -47,50 +47,73 @@ public class Turtle extends Bean {
             newYpos = newYpos + steps > WORLD_SIZE ?
                     newYpos + steps - WORLD_SIZE: newYpos +steps;
         }else if(headTo == Heading.NORTH){
-            newYpos = newYpos - steps < 0 ?
-                    newYpos - steps + WORLD_SIZE: newYpos - steps;
+//            newYpos = newYpos - steps < 0 ?
+//                    newYpos - steps + WORLD_SIZE: newYpos - steps;
+            moveNorth(steps);
+            for(Point test: path){
+                System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: ");
+            }
+            System.out.println();
         }else if(headTo == Heading.EAST){
             newXpos =  newXpos + steps > WORLD_SIZE ?
                     newXpos + steps - WORLD_SIZE : newXpos + steps;
         }else if(headTo == Heading.WEST) {
             newXpos = newXpos - steps < 0 ? newXpos - steps + WORLD_SIZE : newXpos - steps;
         }
-        Point newPoint = new Point(newXpos, newYpos, currentPosition.getPos()+1);
-        System.out.println("\n/********************Before*****************/");
-        for(Point test: path){
-            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
-        }
-        System.out.println();
-
-        System.out.println();
-        if(penIsDown){
-            path.add(newPoint);
-        }else{
-            newPoint.setEndPoint(true);
-        }
-        currentPosition = new Point(newXpos, newYpos, newPoint.getPos());
-        currentPosition.setEndPoint(newPoint.getEndPoint());
-        System.out.print("("+""+currentPosition.getxCoord()+" "+currentPosition.getyCoord()+") position at: "+currentPosition.getEndPoint()+"; ");
-        System.out.println("\n/********************After*****************/");
-        for(Point test: path){
-            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
-        }
+//        Point newPoint = new Point(newXpos, newYpos);
+//        System.out.println("\n/********************Before*****************/");
+//        for(Point test: path){
+//            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
+//        }
+//        System.out.println();
+//
+//        System.out.println();
+//        if(penIsDown){
+//            path.add(newPoint);
+//        }else{
+//            newPoint.setEndPoint(true);
+//        }
+//        currentPosition = new Point(newXpos, newYpos);
+//        currentPosition.setEndPoint(newPoint.getEndPoint());
+//        System.out.print("("+""+currentPosition.getxCoord()+" "+currentPosition.getyCoord()+") position at: "+currentPosition.getEndPoint()+"; ");
+//        System.out.println("\n/********************After*****************/");
+//        for(Point test: path){
+//            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
+//        }
         firePropertyChange(null, null, null);
     }
 
     private void moveNorth(int yCoord){
         //Moving upward
-        int start = 0;
-        int newYCoord = currentPosition.getyCoord() - 1;
-        int newXCoord = currentPosition.getxCoord();
-        while(start < yCoord){
-            if(newYCoord < 0){
-                newYCoord += WORLD_SIZE ;
+        if(penIsDown){
+            if(currentPosition.getyCoord() - yCoord <= 0){
+                Point pointToBound = new Point(currentPosition.getxCoord(), 0);
+                path.add(pointToBound);
+
+                //flag1, flag2 are using for bound checking when drawing
+                Point flag1 = new Point(currentPosition.getxCoord(), -1);
+                path.add(flag1);
+                Point flag2 = new Point(currentPosition.getxCoord(), WORLD_SIZE+1);
+                path.add(flag2);
+
+                Point pointFromBound = new Point(currentPosition.getxCoord(),
+                        WORLD_SIZE);
+                path.add(pointFromBound);
+                Point newPoint = new Point(currentPosition.getxCoord(),
+                        currentPosition.getyCoord() - yCoord + WORLD_SIZE);
+                path.add(newPoint);
+                currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord());
+            }else {
+                Point newPoint = new Point(currentPosition.getxCoord(), currentPosition.getyCoord() - yCoord);
+                path.add(newPoint);
+                currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord());
             }
-            Point newPoint = new Point(newXCoord, newYCoord, this.color);
-            newYCoord -= 1;
-            path.add(newPoint);
-            start++;
+        }else{
+            int newYpos = currentPosition.getyCoord() - yCoord < 0 ?
+                    currentPosition.getyCoord() - yCoord + WORLD_SIZE: currentPosition.getyCoord() - yCoord;
+            int newXpos = currentPosition.getxCoord();
+            currentPosition = new Point(newXpos, newYpos);
+            currentPosition.setEndPoint(true);
         }
     }
 

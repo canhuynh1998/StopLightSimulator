@@ -23,18 +23,28 @@ public class TurtleView extends JPanel implements PropertyChangeListener {
 
     public void paintComponent(Graphics gc) {
         Point previous = model.getList().get(0);
-        System.out.println(previous.getxCoord()+"  "+previous.getyCoord());
+
         super.paintComponent(gc);
         Color oldColor = gc.getColor();
         gc.setColor(model.getColor());
         gc.fillOval(model.getCurrentPosition().getxCoord(), model.getCurrentPosition().getyCoord(), diameter, diameter);
         for(Point current : model.getList()){
-            if(current.getEndPoint() == false && previous.getEndPoint() == false){
+            if(!current.getEndPoint() && !previous.getEndPoint()){
+                if(previous.getyCoord() == -1 || previous.getyCoord() == Turtle.WORLD_SIZE +1){
+                    previous = new Point(current.getxCoord(), current.getyCoord());
+                    continue;
+                }
+                if(previous.getxCoord() == -1 || previous.getxCoord() == Turtle.WORLD_SIZE +1){
+                    previous = new Point(current.getxCoord(), current.getyCoord());
+                    continue;
+                }
+                System.out.println("("+previous.getxCoord()+" "+previous.getyCoord()+" "+previous.getEndPoint()+
+                        ") ("+current.getxCoord()+" "+current.getyCoord()+current.getEndPoint()+")");
                 gc.drawLine(previous.getxCoord(), previous.getyCoord(), current.getxCoord(), current.getyCoord());
             }
 
             gc.setColor(oldColor);
-            previous = new Point(current.getxCoord(), current.getyCoord(), current.getPos());
+            previous = new Point(current.getxCoord(), current.getyCoord());
         }
     }
 
