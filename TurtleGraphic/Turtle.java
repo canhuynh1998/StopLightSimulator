@@ -14,7 +14,7 @@ public class Turtle extends Bean {
     public Turtle(){
         currentPosition = new Point(50,50);
         path = new ArrayList<Point>();
-        path.add(new Point(50, 50));
+        path.add(new Point(currentPosition.getxCoord(), currentPosition.getyCoord()));
         penIsDown = true;
         color = Color.BLACK;
     }
@@ -29,65 +29,47 @@ public class Turtle extends Bean {
         }
         firePropertyChange(null, null, null);
     }
+
+    public boolean getPenIsDown(){ return penIsDown;}
+
     public Point getCurrentPosition(){return this.currentPosition;}
 
-    public void setColor(Color color){
-        this.color=color;
-    }
     public Color getColor() { return color; }
 
+    public void setColor(Color color){this.color = color;}
     public void turn(Heading direction){ headTo = direction; }  //Set the moving direction of the turtle
 
     public List<Point> getList(){ return path; }
 
     public void move(int steps){
-        int newXpos = currentPosition.getxCoord();
-        int newYpos = currentPosition.getyCoord();
         if(headTo == Heading.SOUTH){
-            newYpos = newYpos + steps > WORLD_SIZE ?
-                    newYpos + steps - WORLD_SIZE: newYpos +steps;
+            moveSouth(steps);
         }else if(headTo == Heading.NORTH){
-//            newYpos = newYpos - steps < 0 ?
-//                    newYpos - steps + WORLD_SIZE: newYpos - steps;
             moveNorth(steps);
-            for(Point test: path){
-                System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: ");
-            }
-            System.out.println();
         }else if(headTo == Heading.EAST){
-            newXpos =  newXpos + steps > WORLD_SIZE ?
-                    newXpos + steps - WORLD_SIZE : newXpos + steps;
+            moveEast(steps);
         }else if(headTo == Heading.WEST) {
-            newXpos = newXpos - steps < 0 ? newXpos - steps + WORLD_SIZE : newXpos - steps;
+            moveWest(steps);
         }
-//        Point newPoint = new Point(newXpos, newYpos);
-//        System.out.println("\n/********************Before*****************/");
-//        for(Point test: path){
-//            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
-//        }
-//        System.out.println();
-//
-//        System.out.println();
-//        if(penIsDown){
-//            path.add(newPoint);
-//        }else{
-//            newPoint.setEndPoint(true);
-//        }
-//        currentPosition = new Point(newXpos, newYpos);
-//        currentPosition.setEndPoint(newPoint.getEndPoint());
-//        System.out.print("("+""+currentPosition.getxCoord()+" "+currentPosition.getyCoord()+") position at: "+currentPosition.getEndPoint()+"; ");
-//        System.out.println("\n/********************After*****************/");
-//        for(Point test: path){
-//            System.out.print("("+""+test.getxCoord()+" "+test.getyCoord()+") position at: "+test.getPos()+"; ");
-//        }
         firePropertyChange(null, null, null);
     }
 
+    public void clearPath(){
+        //Clear the whole path.
+        Point temp = currentPosition;
+        path.clear();
+        path.add(temp);
+        firePropertyChange(null, null, null);
+    }
+    public Point getCur(){
+        return currentPosition;
+    }
     private void moveNorth(int yCoord){
         //Moving upward
+        Point newPoint = null;
         if(penIsDown){
             if(currentPosition.getyCoord() - yCoord <= 0){
-                Point pointToBound = new Point(currentPosition.getxCoord(), 0);
+                Point pointToBound = new Point(currentPosition.getxCoord(), 0, currentPosition.getColor());
                 path.add(pointToBound);
 
                 //flag1, flag2 are using for bound checking when drawing
@@ -97,72 +79,130 @@ public class Turtle extends Bean {
                 path.add(flag2);
 
                 Point pointFromBound = new Point(currentPosition.getxCoord(),
-                        WORLD_SIZE);
+                        WORLD_SIZE, currentPosition.getColor());
                 path.add(pointFromBound);
-                Point newPoint = new Point(currentPosition.getxCoord(),
-                        currentPosition.getyCoord() - yCoord + WORLD_SIZE);
-                path.add(newPoint);
-                currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord());
+                newPoint = new Point(currentPosition.getxCoord(),
+                        currentPosition.getyCoord() - yCoord + WORLD_SIZE, currentPosition.getColor());
             }else {
-                Point newPoint = new Point(currentPosition.getxCoord(), currentPosition.getyCoord() - yCoord);
-                path.add(newPoint);
-                currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord());
+                newPoint = new Point(currentPosition.getxCoord(), currentPosition.getyCoord() - yCoord, currentPosition.getColor());
             }
+            path.add(newPoint);
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), currentPosition.getColor());
         }else{
             int newYpos = currentPosition.getyCoord() - yCoord < 0 ?
                     currentPosition.getyCoord() - yCoord + WORLD_SIZE: currentPosition.getyCoord() - yCoord;
             int newXpos = currentPosition.getxCoord();
-            currentPosition = new Point(newXpos, newYpos);
+            Color newColor = currentPosition.getColor();
+            newPoint = new Point(newXpos, newYpos);
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), newColor);
             currentPosition.setEndPoint(true);
         }
     }
 
     private void moveSouth(int yCoord){
         //Moving downward
-        int start = 0;
-        int newYCoord = currentPosition.getyCoord() + 1;
-        int newXCoord = currentPosition.getxCoord();
-        while(start < yCoord){
-            if(newYCoord > WORLD_SIZE){
-                newYCoord -= WORLD_SIZE;
+        if(penIsDown){
+            Point newPoint = null;
+            if(currentPosition.getyCoord() + yCoord >= WORLD_SIZE){
+                Point pointToBound = new Point(currentPosition.getxCoord(), WORLD_SIZE, currentPosition.getColor());
+                path.add(pointToBound);
+
+                //flag1, flag2 are using for bound checking when drawing
+                Point flag2 = new Point(currentPosition.getxCoord(), WORLD_SIZE+1);
+                path.add(flag2);
+                Point flag1 = new Point(currentPosition.getxCoord(), -1);
+                path.add(flag1);
+
+                Point pointFromBound = new Point(currentPosition.getxCoord(),
+                        0, currentPosition.getColor());
+                path.add(pointFromBound);
+                newPoint = new Point(currentPosition.getxCoord(),
+                        currentPosition.getyCoord() + yCoord - WORLD_SIZE, currentPosition.getColor());
+            }else {
+                newPoint = new Point(currentPosition.getxCoord(), currentPosition.getyCoord() + yCoord, currentPosition.getColor());
             }
-            Point newPoint = new Point(newXCoord, newYCoord, this.color);
-            newYCoord ++;
             path.add(newPoint);
-            start++;
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), currentPosition.getColor());
+        }else{
+            int newYpos = currentPosition.getyCoord() + yCoord > WORLD_SIZE ?
+                    currentPosition.getyCoord() + yCoord - WORLD_SIZE: currentPosition.getyCoord() + yCoord;
+            int newXpos = currentPosition.getxCoord();
+            Color newColor = currentPosition.getColor();
+            currentPosition = new Point(newXpos, newYpos, newColor);
+            currentPosition.setEndPoint(true);
         }
     }
 
     private void moveEast(int xCoord){
         //Moving to the right
-        int start = 0;
-        int newYCoord = currentPosition.getyCoord();
-        int newXCoord = currentPosition.getxCoord() + 1;
-        while(start < xCoord){
-            if(newXCoord > WORLD_SIZE){
-                newXCoord -= WORLD_SIZE;
+        Point newPoint = null;
+        if(penIsDown){
+            if(currentPosition.getxCoord() + xCoord >= WORLD_SIZE){
+                Point pointToBound = new Point(WORLD_SIZE, currentPosition.getyCoord(), currentPosition.getColor());
+                path.add(pointToBound);
+
+                //flag1, flag2 are using for bound checking when drawing
+                Point flag2 = new Point(WORLD_SIZE+1,currentPosition.getyCoord());
+                path.add(flag2);
+                Point flag1 = new Point(-1, currentPosition.getyCoord());
+                path.add(flag1);
+
+                Point pointFromBound = new Point(0,
+                        currentPosition.getyCoord(), currentPosition.getColor());
+                path.add(pointFromBound);
+                newPoint = new Point( currentPosition.getxCoord() + xCoord - WORLD_SIZE,
+                        currentPosition.getyCoord());
+            }else {
+                newPoint = new Point(currentPosition.getxCoord() + xCoord, currentPosition.getyCoord(), currentPosition.getColor());
             }
-            Point newPoint = new Point(newXCoord, newYCoord, this.color);
-            newXCoord ++;
             path.add(newPoint);
-            start++;
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), currentPosition.getColor());
+        }else{
+            int newYpos = currentPosition.getyCoord() ;
+            int newXpos = currentPosition.getxCoord() + xCoord > WORLD_SIZE ?
+                    currentPosition.getxCoord() + xCoord - WORLD_SIZE: currentPosition.getxCoord() + xCoord;
+            newPoint = new Point(newXpos, newYpos);
+            System.out.println("Test: "+newPoint.getxCoord()+" "+newPoint.getyCoord()+")");
+            Color newColor = currentPosition.getColor();
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), newColor);
+            currentPosition.setEndPoint(true);
         }
     }
 
     private void moveWest(int xCoord){
         //Moving to the left
-        int start = 0;
-        int newYCoord = currentPosition.getyCoord();
-        int newXCoord = currentPosition.getxCoord() - 1;
-        while(start < xCoord){
-            if(newXCoord < 0){
-                newXCoord += WORLD_SIZE;
+        Point newPoint = null;
+        if(penIsDown){
+            if(currentPosition.getxCoord() - xCoord <= 0){
+                Point pointToBound = new Point(0, currentPosition.getyCoord(), currentPosition.getColor());
+                path.add(pointToBound);
+
+                //flag1, flag2 are using for bound checking when drawing
+                Point flag1 = new Point(-1, currentPosition.getyCoord());
+                path.add(flag1);
+                Point flag2 = new Point(WORLD_SIZE+1,currentPosition.getyCoord() );
+                path.add(flag2);
+
+                Point pointFromBound = new Point(WORLD_SIZE,
+                        currentPosition.getyCoord());
+                path.add(pointFromBound);
+                newPoint = new Point( currentPosition.getxCoord() - xCoord + WORLD_SIZE,
+                        currentPosition.getyCoord(), currentPosition.getColor());
+            }else {
+                newPoint = new Point(currentPosition.getxCoord() - xCoord, currentPosition.getyCoord(), currentPosition.getColor());
             }
-            Point newPoint = new Point(newXCoord, newYCoord, this.color);
-            newXCoord --;
             path.add(newPoint);
-            start++;
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), currentPosition.getColor());
+        }else{
+            int newYpos = currentPosition.getyCoord() ;
+            int newXpos = currentPosition.getxCoord() - xCoord < 0 ?
+                    currentPosition.getxCoord() - xCoord + WORLD_SIZE: currentPosition.getxCoord() - xCoord;
+            newPoint = new Point(newXpos, newYpos);
+            Color newColor = currentPosition.getColor();
+            currentPosition = new Point(newPoint.getxCoord(), newPoint.getyCoord(), newColor);
+            currentPosition.setEndPoint(true);
         }
+
     }
 
     public static void main(String[] args){

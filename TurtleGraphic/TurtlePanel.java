@@ -93,7 +93,7 @@ public class TurtlePanel extends JPanel implements ActionListener {
         }else if(cmnd == "Help" ){
             Utilities.inform("Click or select direction buttons to draw at the desired direction");
         }else if(cmnd == "Pen"){
-            model.setPenIsDown();
+          model.setPenIsDown();
         } else if(cmnd == "North"){
             int steps = Integer.parseInt(Utilities.ask("How many steps"));
             model.turn(Heading.NORTH);
@@ -152,7 +152,7 @@ public class TurtlePanel extends JPanel implements ActionListener {
 
 
     public static void main(String[] args) {
-        // write your code here
+	// write your code here
         System.out.println("Test");
         TurtlePanel app = new TurtlePanel();
     }
